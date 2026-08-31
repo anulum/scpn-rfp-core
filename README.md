@@ -8,6 +8,11 @@ Contact: www.anulum.li | protoscience@anulum.li
 SCPN RFP Core — README
 -->
 
+<div align="center">
+  <img src="docs/assets/repo_header.png"
+       alt="SCPN RFP Core — Relaxed-Current Torus, One Identifier">
+</div>
+
 # SCPN RFP Core
 
 Governed device-family repository for reversed-field pinch (RFP) fusion
