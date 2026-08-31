@@ -209,7 +209,6 @@ def build_gate_plan(root: Path) -> list[tuple[str, list[str] | None]]:
                 str(bin_dir / "pytest"),
                 "-q",
                 "--cov=src",
-                "--cov=src",
                 "--cov=tools",
                 "--cov-branch",
                 "--cov-fail-under=100",
