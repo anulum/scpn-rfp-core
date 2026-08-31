@@ -5,7 +5,13 @@
     "spo_actionable": false,
     "spo_semantic_mode": "review_only"
   },
-  "capabilities": [],
+  "capabilities": [
+    {
+      "evidence_maturity": "computational_prototype",
+      "evidence_pointer": "VALIDATION.md#device-configuration-model",
+      "identifier": "device_configuration_model"
+    }
+  ],
   "configurations": [
     "reversed_field_pinch"
   ],
@@ -15,10 +21,10 @@
     "identifier": "scpn-rfp-core.control-adapter"
   },
   "device_family": "reversed_field_pinch",
-  "evidence_maturity": "architecture_only",
+  "evidence_maturity": "computational_prototype",
   "lifecycle": {
     "evidence_pointer": null,
-    "reason": "architecture_only: no implemented capability exists to federate",
+    "reason": "federation gates have not run; capabilities remain repository-local",
     "state": "not_federated"
   },
   "machine_protection": {
@@ -30,8 +36,9 @@
     "not safety-certified",
     "not autonomous-plant-ready",
     "not commercially reactor-ready",
-    "no implemented solver, controller, benchmark, dataset, or deployable artefact",
-    "no experimental correlation"
+    "no implemented solver, controller, benchmark, dataset, or published artefact",
+    "no experimental correlation",
+    "no parameter set describes or validates any real machine"
   ],
   "project": "SCPN-RFP-CORE",
   "research_group": {
@@ -44,7 +51,7 @@
     "manifest_path": "reactor-domain.json",
     "manifest_schema": "scpn.reactor-domain.v1",
     "manifest_schema_version": "1.0.0",
-    "manifest_sha256": "ce532dc0d78ea5a7e86932408774fb70ee22058e96b9873125af2695a701b9f6",
+    "manifest_sha256": "f121afbf0a9c7fa3ff2e3c5a5538fd66ce1026a65659fae70441fa75fb835367",
     "repository": "SCPN-RFP-CORE"
   },
   "spo_registry": {
