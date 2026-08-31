@@ -29,11 +29,14 @@ from scpn_rfp_core.observability import (
     CandidateProfile,
     ClockKind,
     ClockModel,
+    ClockRelation,
     DeferredCandidate,
     DiagnosticChannelPlan,
     DiagnosticPlan,
+    FrameKind,
     ObservabilityBinding,
     ObservabilityClass,
+    ReferenceFrame,
     SemanticCarrier,
     plan_from_bytes,
     plan_from_record,
@@ -55,7 +58,7 @@ DERIVED_BINDINGS = {
 NONCYCLIC_BINDINGS = {
     "calibration": "synthetic calibration set",
     "clock_epoch": "clk_shot",
-    "coordinate_frame": "declared poloidal cross-section and F-Theta conventions",
+    "coordinate_frame": "frm_flux",
     "provenance": "synthetic fixture",
     "quality": "synthetic quality flags",
     "uncertainty": "declared bounds",
@@ -69,6 +72,34 @@ NUMERICAL_BINDINGS = {
     "simulation_clock": "clk_sim",
     "solver_validity": "declared solver validity envelope",
 }
+
+
+REFERENCE_FRAMES = (
+    ReferenceFrame(
+        identifier="frm_flux",
+        kind=FrameKind.FLUX_SURFACE,
+        description="flux-surface label frame from the equilibrium set",
+    ),
+    ReferenceFrame(
+        identifier="frm_machine",
+        kind=FrameKind.MACHINE_CYLINDRICAL,
+        description="machine cylindrical R-phi-Z frame",
+    ),
+)
+CLOCK_RELATIONS = (
+    ClockRelation(
+        child_identifier="clk_shot",
+        parent_identifier="clk_facility",
+        max_offset_s=1.0e-6,
+        uncertainty_s=1.0e-7,
+        method=(
+            "synthetic declaration: trigger timestamped against the "
+            "facility oscillator; no correlation evidence claimed"
+        ),
+        mapping_state="unmapped",
+        evidence_claimed=False,
+    ),
+)
 
 
 def clock_facility() -> ClockModel:
@@ -113,6 +144,9 @@ def channel_noncyclic_one() -> DiagnosticChannelPlan:
         clock_identifier="clk_shot",
         sample_rate_hz=1.0e04,
         max_signal_frequency_hz=0.0,
+        acquisition_start_s=0.0,
+        acquisition_duration_s=0.5,
+        element_count=8,
         evidence_bindings=dict(NONCYCLIC_BINDINGS),
         synthetic=True,
     )
@@ -127,6 +161,9 @@ def channel_noncyclic_two() -> DiagnosticChannelPlan:
         clock_identifier="clk_shot",
         sample_rate_hz=1.0e06,
         max_signal_frequency_hz=0.0,
+        acquisition_start_s=0.0,
+        acquisition_duration_s=0.5,
+        element_count=1,
         evidence_bindings=dict(NONCYCLIC_BINDINGS),
         synthetic=True,
     )
@@ -141,6 +178,9 @@ def channel_derived() -> DiagnosticChannelPlan:
         clock_identifier="clk_facility",
         sample_rate_hz=2.0e06,
         max_signal_frequency_hz=1.0e05,
+        acquisition_start_s=0.0,
+        acquisition_duration_s=0.5,
+        element_count=32,
         evidence_bindings=dict(DERIVED_BINDINGS),
         synthetic=True,
     )
@@ -155,6 +195,9 @@ def channel_oscillator() -> DiagnosticChannelPlan:
         clock_identifier="clk_sim",
         sample_rate_hz=1.0e4,
         max_signal_frequency_hz=0.0,
+        acquisition_start_s=0.0,
+        acquisition_duration_s=0.1,
+        element_count=1,
         evidence_bindings=dict(NUMERICAL_BINDINGS),
         synthetic=True,
     )
@@ -166,6 +209,8 @@ def synthetic_plan() -> DiagnosticPlan:
         identifier="rfp_reference_plan",
         binding=CATALOGUE_BINDING,
         clocks=(clock_facility(), clock_shot(), clock_simulation()),
+        frames=REFERENCE_FRAMES,
+        clock_relations=CLOCK_RELATIONS,
         channels=(
             channel_noncyclic_one(),
             channel_noncyclic_two(),
@@ -352,6 +397,9 @@ def _derived(**overrides: Any) -> DiagnosticChannelPlan:
         "clock_identifier": "clk_facility",
         "sample_rate_hz": 2.0e06,
         "max_signal_frequency_hz": 1.0e05,
+        "acquisition_start_s": 0.0,
+        "acquisition_duration_s": 0.5,
+        "element_count": 32,
         "evidence_bindings": dict(DERIVED_BINDINGS),
         "synthetic": True,
     }
@@ -471,6 +519,8 @@ def test_plan_accepts_explicit_deferral() -> None:
         identifier="rfp_partial_plan",
         binding=CATALOGUE_BINDING,
         clocks=(clock_facility(), clock_shot()),
+        frames=REFERENCE_FRAMES,
+        clock_relations=CLOCK_RELATIONS,
         channels=(
             channel_noncyclic_one(),
             channel_noncyclic_two(),
@@ -493,6 +543,8 @@ def test_plan_rejects_malformed_identifier() -> None:
             identifier="Plan!",
             binding=CATALOGUE_BINDING,
             clocks=(clock_facility(), clock_shot(), clock_simulation()),
+            frames=REFERENCE_FRAMES,
+            clock_relations=CLOCK_RELATIONS,
             channels=(
                 channel_noncyclic_one(),
                 channel_noncyclic_two(),
@@ -515,6 +567,8 @@ def test_plan_rejects_foreign_binding() -> None:
                 reactor_registry_digest_sha256="0" * 64,
             ),
             clocks=(clock_facility(), clock_shot(), clock_simulation()),
+            frames=REFERENCE_FRAMES,
+            clock_relations=CLOCK_RELATIONS,
             channels=(
                 channel_noncyclic_one(),
                 channel_noncyclic_two(),
@@ -532,6 +586,8 @@ def test_plan_rejects_unsorted_clocks() -> None:
             identifier="rfp_reference_plan",
             binding=CATALOGUE_BINDING,
             clocks=(clock_shot(), clock_facility(), clock_simulation()),
+            frames=REFERENCE_FRAMES,
+            clock_relations=CLOCK_RELATIONS,
             channels=(
                 channel_noncyclic_one(),
                 channel_noncyclic_two(),
@@ -549,6 +605,8 @@ def test_plan_rejects_unsorted_channels() -> None:
             identifier="rfp_reference_plan",
             binding=CATALOGUE_BINDING,
             clocks=(clock_facility(), clock_shot(), clock_simulation()),
+            frames=REFERENCE_FRAMES,
+            clock_relations=CLOCK_RELATIONS,
             channels=(
                 channel_noncyclic_two(),
                 channel_noncyclic_one(),
@@ -570,6 +628,8 @@ def test_plan_rejects_duplicate_deferrals() -> None:
             identifier="rfp_partial_plan",
             binding=CATALOGUE_BINDING,
             clocks=(clock_facility(), clock_shot()),
+            frames=REFERENCE_FRAMES,
+            clock_relations=CLOCK_RELATIONS,
             channels=(
                 channel_noncyclic_one(),
                 channel_noncyclic_two(),
@@ -586,6 +646,8 @@ def test_plan_rejects_undeclared_clock() -> None:
             identifier="rfp_reference_plan",
             binding=CATALOGUE_BINDING,
             clocks=(clock_facility(), clock_shot()),
+            frames=REFERENCE_FRAMES,
+            clock_relations=CLOCK_RELATIONS,
             channels=(
                 channel_noncyclic_one(),
                 channel_noncyclic_two(),
@@ -606,6 +668,8 @@ def test_plan_rejects_incompatible_clock_kind() -> None:
             identifier="rfp_reference_plan",
             binding=CATALOGUE_BINDING,
             clocks=(clock_facility(), clock_shot(), clock_simulation()),
+            frames=REFERENCE_FRAMES,
+            clock_relations=CLOCK_RELATIONS,
             channels=(
                 channel_noncyclic_one(),
                 channel_noncyclic_two(),
@@ -623,6 +687,8 @@ def test_plan_rejects_planned_and_deferred_overlap() -> None:
             identifier="rfp_reference_plan",
             binding=CATALOGUE_BINDING,
             clocks=(clock_facility(), clock_shot(), clock_simulation()),
+            frames=REFERENCE_FRAMES,
+            clock_relations=CLOCK_RELATIONS,
             channels=(
                 channel_noncyclic_one(),
                 channel_noncyclic_two(),
@@ -645,6 +711,8 @@ def test_plan_rejects_incomplete_coverage() -> None:
             identifier="rfp_reference_plan",
             binding=CATALOGUE_BINDING,
             clocks=(clock_facility(), clock_shot(), clock_simulation()),
+            frames=REFERENCE_FRAMES,
+            clock_relations=CLOCK_RELATIONS,
             channels=(
                 channel_noncyclic_one(),
                 channel_noncyclic_two(),
@@ -661,6 +729,8 @@ def test_report_flags_band_outside_typical_range() -> None:
         identifier="rfp_reference_plan",
         binding=CATALOGUE_BINDING,
         clocks=(clock_facility(), clock_shot(), clock_simulation()),
+        frames=REFERENCE_FRAMES,
+        clock_relations=CLOCK_RELATIONS,
         channels=(
             channel_noncyclic_one(),
             channel_noncyclic_two(),
@@ -687,6 +757,8 @@ def test_report_flags_clock_coarser_than_sampling() -> None:
         identifier="rfp_partial_plan",
         binding=CATALOGUE_BINDING,
         clocks=(clock_facility(), clock, clock_simulation()),
+        frames=REFERENCE_FRAMES,
+        clock_relations=CLOCK_RELATIONS,
         channels=(
             channel_noncyclic_one(),
             channel_oscillator(),
@@ -705,6 +777,8 @@ def test_round_trip_preserves_deferrals() -> None:
         identifier="rfp_partial_plan",
         binding=CATALOGUE_BINDING,
         clocks=(clock_facility(), clock_shot()),
+        frames=REFERENCE_FRAMES,
+        clock_relations=CLOCK_RELATIONS,
         channels=(
             channel_noncyclic_one(),
             channel_noncyclic_two(),
@@ -761,7 +835,9 @@ def test_parser_rejects_non_mapping_binding() -> None:
         plan_from_record(record)
 
 
-@pytest.mark.parametrize("field", ["clocks", "channels", "deferrals"])
+@pytest.mark.parametrize(
+    "field", ["clocks", "channels", "deferrals", "frames", "clock_relations"]
+)
 def test_parser_rejects_non_list_sections(field: str) -> None:
     """Every plan section must be an array."""
     record = synthetic_plan().to_record()
@@ -770,7 +846,9 @@ def test_parser_rejects_non_list_sections(field: str) -> None:
         plan_from_record(record)
 
 
-@pytest.mark.parametrize("field", ["clocks", "channels", "deferrals"])
+@pytest.mark.parametrize(
+    "field", ["clocks", "channels", "deferrals", "frames", "clock_relations"]
+)
 def test_parser_rejects_non_object_entries(field: str) -> None:
     """Every section entry must be an object."""
     record = synthetic_plan().to_record()
@@ -844,3 +922,378 @@ def test_bytes_parser_rejects_invalid_utf8() -> None:
     """Non-UTF-8 bytes are rejected."""
     with pytest.raises(DiagnosticPlanError, match="invalid JSON"):
         plan_from_bytes(b"\xff\xfe")
+
+
+def test_frame_rejects_disallowed_kind() -> None:
+    """A frame kind outside the repository's allowed set is rejected."""
+    with pytest.raises(DiagnosticPlanError, match="allowed frame"):
+        ReferenceFrame(
+            identifier="frm_bad",
+            kind=FrameKind.CHAMBER_CARTESIAN,
+            description="x",
+        )
+
+
+def test_frame_rejects_malformed_identifier() -> None:
+    """A malformed frame identifier is rejected."""
+    with pytest.raises(DiagnosticPlanError, match=r"frame\.identifier"):
+        ReferenceFrame(
+            identifier="Frame!",
+            kind=FrameKind.FLUX_SURFACE,
+            description="x",
+        )
+
+
+def test_frame_rejects_empty_description() -> None:
+    """An empty frame description is rejected."""
+    with pytest.raises(DiagnosticPlanError, match="description"):
+        ReferenceFrame(
+            identifier="frm_ok",
+            kind=FrameKind.FLUX_SURFACE,
+            description="",
+        )
+
+
+def test_relation_rejects_self_relation() -> None:
+    """A clock cannot be related to itself."""
+    with pytest.raises(DiagnosticPlanError, match="itself"):
+        ClockRelation(
+            child_identifier="clk_shot",
+            parent_identifier="clk_shot",
+            max_offset_s=1.0e-6,
+            uncertainty_s=1.0e-7,
+            method="x",
+            mapping_state="unmapped",
+            evidence_claimed=False,
+        )
+
+
+@pytest.mark.parametrize("value", [-1.0, float("nan"), float("inf")])
+def test_relation_rejects_bad_bounds(value: float) -> None:
+    """Non-finite or negative relation bounds are rejected."""
+    with pytest.raises(DiagnosticPlanError, match="finite and non-negative"):
+        ClockRelation(
+            child_identifier="clk_shot",
+            parent_identifier="clk_facility",
+            max_offset_s=value,
+            uncertainty_s=1.0e-7,
+            method="x",
+            mapping_state="unmapped",
+            evidence_claimed=False,
+        )
+
+
+def test_relation_rejects_empty_method() -> None:
+    """A relation without a method statement is rejected."""
+    with pytest.raises(DiagnosticPlanError, match="method"):
+        ClockRelation(
+            child_identifier="clk_shot",
+            parent_identifier="clk_facility",
+            max_offset_s=1.0e-6,
+            uncertainty_s=1.0e-7,
+            method="",
+            mapping_state="unmapped",
+            evidence_claimed=False,
+        )
+
+
+def test_plan_rejects_undeclared_relation_clock() -> None:
+    """A relation naming an undeclared clock is rejected."""
+    relation = ClockRelation(
+        child_identifier="clk_zz_unknown",
+        parent_identifier="clk_facility",
+        max_offset_s=1.0e-6,
+        uncertainty_s=1.0e-7,
+        method="x",
+        mapping_state="unmapped",
+        evidence_claimed=False,
+    )
+    plan = synthetic_plan()
+    with pytest.raises(DiagnosticPlanError, match="is not declared"):
+        DiagnosticPlan(
+            identifier=plan.identifier,
+            binding=plan.binding,
+            clocks=plan.clocks,
+            frames=plan.frames,
+            clock_relations=(*plan.clock_relations, relation),
+            channels=plan.channels,
+            deferrals=plan.deferrals,
+        )
+
+
+def test_plan_rejects_simulation_clock_relation() -> None:
+    """The simulation clock cannot join a synchronisation relation."""
+    relation = ClockRelation(
+        child_identifier="clk_sim",
+        parent_identifier="clk_facility",
+        max_offset_s=1.0e-6,
+        uncertainty_s=1.0e-7,
+        method="x",
+        mapping_state="unmapped",
+        evidence_claimed=False,
+    )
+    plan = synthetic_plan()
+    with pytest.raises(DiagnosticPlanError, match="simulation clock"):
+        DiagnosticPlan(
+            identifier=plan.identifier,
+            binding=plan.binding,
+            clocks=plan.clocks,
+            frames=plan.frames,
+            clock_relations=(*plan.clock_relations, relation),
+            channels=plan.channels,
+            deferrals=plan.deferrals,
+        )
+
+
+def test_plan_requires_epoch_to_facility_bound() -> None:
+    """An epoch clock without a facility bound is rejected."""
+    plan = synthetic_plan()
+    with pytest.raises(DiagnosticPlanError, match="must declare a bound"):
+        DiagnosticPlan(
+            identifier=plan.identifier,
+            binding=plan.binding,
+            clocks=plan.clocks,
+            frames=plan.frames,
+            clock_relations=(),
+            channels=plan.channels,
+            deferrals=plan.deferrals,
+        )
+
+
+def test_plan_rejects_duplicate_frames() -> None:
+    """Duplicate frame identifiers are rejected."""
+    plan = synthetic_plan()
+    with pytest.raises(DiagnosticPlanError, match=r"plan\.frames"):
+        DiagnosticPlan(
+            identifier=plan.identifier,
+            binding=plan.binding,
+            clocks=plan.clocks,
+            frames=(*plan.frames, plan.frames[0]),
+            clock_relations=plan.clock_relations,
+            channels=plan.channels,
+            deferrals=plan.deferrals,
+        )
+
+
+def test_plan_rejects_unknown_frame_reference() -> None:
+    """A coordinate_frame binding must name a declared frame."""
+    plan = synthetic_plan()
+    kept = tuple(frame for frame in plan.frames if frame.identifier != "frm_flux")
+    with pytest.raises(DiagnosticPlanError, match="declared frame"):
+        DiagnosticPlan(
+            identifier=plan.identifier,
+            binding=plan.binding,
+            clocks=plan.clocks,
+            frames=kept,
+            clock_relations=plan.clock_relations,
+            channels=plan.channels,
+            deferrals=plan.deferrals,
+        )
+
+
+@pytest.mark.parametrize("start", [float("nan"), float("inf")])
+def test_channel_rejects_bad_acquisition_start(start: float) -> None:
+    """A non-finite acquisition start is rejected."""
+    with pytest.raises(DiagnosticPlanError, match="acquisition_start_s"):
+        _derived(acquisition_start_s=start)
+
+
+@pytest.mark.parametrize("duration", [0.0, -1.0, float("nan")])
+def test_channel_rejects_bad_acquisition_duration(duration: float) -> None:
+    """A non-positive acquisition duration is rejected."""
+    with pytest.raises(DiagnosticPlanError, match="acquisition_duration_s"):
+        _derived(acquisition_duration_s=duration)
+
+
+@pytest.mark.parametrize("count", [0, -3, True])
+def test_channel_rejects_bad_element_count(count: object) -> None:
+    """A non-integer or sub-unit element count is rejected."""
+    with pytest.raises(DiagnosticPlanError, match="element_count"):
+        _derived(element_count=count)
+
+
+def test_report_flags_window_beyond_device_ceiling() -> None:
+    """An acquisition window beyond the device scale draws the advisory."""
+    channel = _derived(acquisition_duration_s=10.0)
+    plan = synthetic_plan()
+    plan = DiagnosticPlan(
+        identifier=plan.identifier,
+        binding=plan.binding,
+        clocks=plan.clocks,
+        frames=plan.frames,
+        clock_relations=plan.clock_relations,
+        channels=tuple(
+            channel if entry.identifier == channel.identifier else entry
+            for entry in plan.channels
+        ),
+        deferrals=plan.deferrals,
+    )
+    findings = plan.consistency_report()
+    assert len(findings) == 1
+    assert "acquisition window" in findings[0].message
+
+
+def test_report_flags_array_size_outside_common_range() -> None:
+    """A two-element array below the common range draws the advisory."""
+    channel = _derived(element_count=2)
+    plan = synthetic_plan()
+    plan = DiagnosticPlan(
+        identifier=plan.identifier,
+        binding=plan.binding,
+        clocks=plan.clocks,
+        frames=plan.frames,
+        clock_relations=plan.clock_relations,
+        channels=tuple(
+            channel if entry.identifier == channel.identifier else entry
+            for entry in plan.channels
+        ),
+        deferrals=plan.deferrals,
+    )
+    findings = plan.consistency_report()
+    assert len(findings) == 1
+    assert "array size" in findings[0].message
+
+
+@pytest.mark.parametrize("section", ["clocks", "channels", "frames", "clock_relations"])
+def test_parser_rejects_unknown_entry_members(section: str) -> None:
+    """Unknown members inside nested entries are rejected."""
+    record = synthetic_plan().to_record()
+    record[section][0]["surprise"] = 1
+    with pytest.raises(DiagnosticPlanError, match="unknown members"):
+        plan_from_record(record)
+
+
+def test_parser_rejects_unknown_deferral_members() -> None:
+    """Unknown members inside a deferral entry are rejected."""
+    record = synthetic_plan().to_record()
+    record["deferrals"] = [{"candidate_id": "x", "reason": "y", "z": 1}]
+    with pytest.raises(DiagnosticPlanError, match="unknown members"):
+        plan_from_record(record)
+
+
+def test_bytes_parser_rejects_duplicate_members() -> None:
+    """A duplicate JSON member is rejected."""
+    data = synthetic_plan().canonical_bytes()
+    text = data.decode("utf-8").rstrip("\n")
+    tampered = text[:-1] + ',"identifier":"x"}\n'
+    with pytest.raises(DiagnosticPlanError, match="duplicate member"):
+        plan_from_bytes(tampered.encode("utf-8"))
+
+
+def test_bytes_parser_rejects_non_canonical_document() -> None:
+    """A valid but non-canonical byte form is rejected."""
+    record = synthetic_plan().to_record()
+    pretty = (json.dumps(record, indent=2, sort_keys=True) + "\n").encode()
+    with pytest.raises(DiagnosticPlanError, match="non-canonical"):
+        plan_from_bytes(pretty)
+
+
+def test_relation_rejects_malformed_identifier() -> None:
+    """A malformed relation clock identifier is rejected."""
+    with pytest.raises(DiagnosticPlanError, match=r"relation\.child_identifier"):
+        ClockRelation(
+            child_identifier="Clock!",
+            parent_identifier="clk_facility",
+            max_offset_s=1.0e-6,
+            uncertainty_s=1.0e-7,
+            method="x",
+            mapping_state="unmapped",
+            evidence_claimed=False,
+        )
+
+
+def test_plan_without_facility_clock_needs_no_relation() -> None:
+    """Without a facility clock, epoch clocks need no declared bound."""
+    plan = synthetic_plan()
+    facility_ids = {
+        clock.identifier
+        for clock in plan.clocks
+        if clock.kind is ClockKind.FACILITY_MONOTONIC
+    }
+    clocks = tuple(
+        clock for clock in plan.clocks if clock.identifier not in facility_ids
+    )
+    channels = tuple(
+        channel
+        for channel in plan.channels
+        if channel.clock_identifier not in facility_ids
+    )
+    kept = {channel.candidate_id for channel in channels}
+    deferrals = tuple(
+        DeferredCandidate(
+            candidate_id=candidate.candidate_id,
+            reason="no facility clock in this variant",
+        )
+        for candidate in APPLICABLE_CANDIDATES
+        if candidate.candidate_id not in kept
+    )
+    variant = DiagnosticPlan(
+        identifier=plan.identifier,
+        binding=plan.binding,
+        clocks=clocks,
+        frames=plan.frames,
+        clock_relations=(),
+        channels=channels,
+        deferrals=deferrals,
+    )
+    assert variant.clock_relations == ()
+
+
+def test_parser_rejects_non_integer_element_count() -> None:
+    """A non-integer element count is rejected by the parser."""
+    record = synthetic_plan().to_record()
+    record["channels"][0]["element_count"] = "many"
+    with pytest.raises(DiagnosticPlanError, match="must be an integer"):
+        plan_from_record(record)
+
+
+def test_relation_rejects_mapped_state() -> None:
+    """Any mapping state other than unmapped is rejected."""
+    with pytest.raises(DiagnosticPlanError, match="mapping_state"):
+        ClockRelation(
+            child_identifier="clk_shot",
+            parent_identifier="clk_facility",
+            max_offset_s=1.0e-6,
+            uncertainty_s=1.0e-7,
+            method="x",
+            mapping_state="mapped",
+            evidence_claimed=False,
+        )
+
+
+def test_relation_rejects_claimed_evidence() -> None:
+    """A relation may never claim correlation evidence."""
+    with pytest.raises(DiagnosticPlanError, match="evidence_claimed"):
+        ClockRelation(
+            child_identifier="clk_shot",
+            parent_identifier="clk_facility",
+            max_offset_s=1.0e-6,
+            uncertainty_s=1.0e-7,
+            method="x",
+            mapping_state="unmapped",
+            evidence_claimed=True,
+        )
+
+
+def test_plan_rejects_duplicate_relations() -> None:
+    """Duplicate clock relations are rejected."""
+    plan = synthetic_plan()
+    with pytest.raises(DiagnosticPlanError, match=r"plan\.clock_relations"):
+        DiagnosticPlan(
+            identifier=plan.identifier,
+            binding=plan.binding,
+            clocks=plan.clocks,
+            frames=plan.frames,
+            clock_relations=(*plan.clock_relations, plan.clock_relations[0]),
+            channels=plan.channels,
+            deferrals=plan.deferrals,
+        )
+
+
+def test_parser_rejects_pre_deepening_record_shape() -> None:
+    """A record without the deepened sections is refused, fail closed."""
+    record = synthetic_plan().to_record()
+    del record["frames"]
+    del record["clock_relations"]
+    with pytest.raises(DiagnosticPlanError, match="must be an array"):
+        plan_from_record(record)
