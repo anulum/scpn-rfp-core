@@ -11,11 +11,14 @@ SCPN RFP Core — Architecture summary
 # Architecture summary
 
 `SCPN-RFP-CORE` is the device-family owner for reversed-field pinch systems
-inside the SCPN Reactor Systems Research Group. The repository holds two implemented capabilities at
-`computational_prototype` — the device configuration model (ADR 0002)
-and the diagnostic and clock semantics model (ADR 0003), both in
-`src/scpn_rfp_core/` — alongside the device boundary, its
-ecosystem contracts, and the validation tooling that enforces both.
+inside the SCPN Reactor Systems Research Group. The repository holds
+three implemented capabilities at `computational_prototype` — the device
+configuration model (ADR 0002), the diagnostic and clock semantics model
+(ADR 0003) and the level-0 device physics (ADR 0005; the Bessel-function
+relaxed state and its profile on the pinned shared Bessel kernels,
+ADR 0006, with optional native kernels in `rust/`), all in
+`src/scpn_rfp_core/` — alongside the device boundary, its ecosystem
+contracts, and the validation tooling that enforces them.
 
 The authoritative architecture record is
 [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md). The ownership decision and

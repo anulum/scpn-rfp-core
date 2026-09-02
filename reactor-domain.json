@@ -9,6 +9,11 @@
       "evidence_maturity": "computational_prototype",
       "evidence_pointer": "VALIDATION.md#diagnostic-and-clock-semantics",
       "identifier": "diagnostic_clock_semantics"
+    },
+    {
+      "evidence_maturity": "computational_prototype",
+      "evidence_pointer": "VALIDATION.md#level-0-device-physics",
+      "identifier": "level0_device_physics"
     }
   ],
   "claims": [],
@@ -61,11 +66,24 @@
     {
       "domain": "self_magnetic_pinch_devices",
       "owner": "SCPN-Z-PINCH-CORE"
+    },
+    {
+      "domain": "shared_physics_geometry_and_numerics_kernels",
+      "owner": "SCPN-REACTOR-KERNELS"
     }
   ],
   "fusion_solver_seams": {
     "active": [],
     "policy": "Versioned seams from SCPN-FUSION-CORE may be consumed only after the reactor family migration gate proves exact replacement; no solver code is copied into this repository."
+  },
+  "kernel_library": {
+    "distribution": "scpn-reactor-kernels",
+    "inventory_sha256": "a5ec0daf5c17957652d649f31a1d6810f47db1529c2ed47d3c8b0a74601ed71a",
+    "kernels": [
+      "numerics_bessel"
+    ],
+    "source_commit": "4a03c58ec936c45c0874fab76bee1b2dfdf082c2",
+    "version": "0.1.0.dev0"
   },
   "license": "AGPL-3.0-or-later",
   "machine_protection": {
@@ -77,7 +95,7 @@
     "not safety-certified",
     "not autonomous-plant-ready",
     "not commercially reactor-ready",
-    "no implemented solver, controller, benchmark, dataset, or published artefact",
+    "no implemented solver, controller, dataset, or published artefact; the level-0 Bessel-function relaxed state (evaluated on the pinned shared numerics kernels) and its timing benchmark are computational prototypes, not validated equilibrium or confinement claims",
     "no experimental correlation",
     "no parameter set describes or validates any real machine"
   ],
@@ -88,7 +106,8 @@
     "clock_identity_declarations",
     "actuator_response_model_boundaries",
     "safety_envelope_declaration",
-    "control_adapter_specification"
+    "control_adapter_specification",
+    "analytic_device_physics_models"
   ],
   "project": "SCPN-RFP-CORE",
   "research_group": {

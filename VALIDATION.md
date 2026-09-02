@@ -19,14 +19,15 @@ followed by the evidence record of each implemented capability.
 |---|---|---|
 | Lint | `ruff check .` | all Python under `src/`, `tools/`, and `tests/` |
 | Format | `ruff format --check .` | same scope |
-| Typing | `mypy --strict src tools tests` | zero errors, strict mode |
+| Typing | `mypy --strict src tools tests benchmarks` | zero errors, strict mode |
 | Tests + coverage | `pytest -q --cov=src --cov=tools --cov-branch --cov-fail-under=100` | 100 % statement and branch coverage of `src/` and `tools/` |
-| Domain manifest | `python3 tools/validate_reactor_domain.py reactor-domain.json` | schema, registry version/digest, exact configuration set, capability inventory shape and ceiling rule, safety boundary |
+| Domain manifest | `python3 tools/validate_reactor_domain.py reactor-domain.json` | schema, registry version/digest, exact configuration set, capability inventory shape and ceiling rule, safety boundary, the optional shared-kernel-library pin |
 | Studio descriptor | `python3 tools/derive_studio_descriptor.py --check` | committed descriptor byte-identical to a fresh derivation |
 | Capability inventory | `python3 tools/generate_capability_inventory.py --check` | committed inventory byte-identical to a fresh generation |
 | Licensing | `reuse lint` | REUSE 3.x compliance of the full tree |
 | Workflow lint | `actionlint` | all files under `.github/workflows/` |
 | Workflow modularity | `python3 tools/audit_workflows.py` | distributed workflow inventory: single ownership per job, coordinator/gate contract, action pinning, size ceilings |
+| Native crate | `make rust` | format, lint and unit tests of the optional native kernels (fetches the pinned kernel crate) |
 | Documentation | `python3 tools/preflight.py --only docs` | UTF-8 readability and relative-link integrity of every Markdown file |
 | Orchestrated | `python3 tools/preflight.py` | fail-closed run of all gates above |
 
@@ -47,7 +48,7 @@ verifies locally and in hosted CI.
 |---|---|
 | `ci.yml` | coordinator and stable required gate |
 | `reusable-static-policy.yml` | lint, format, typing, domain policy, workflow guard |
-| `reusable-tests.yml` | tests with complete statement and branch coverage |
+| `reusable-tests.yml` | tests with complete statement and branch coverage; native crate gates, bit-exact parity and a benchmark smoke |
 | `pre-commit.yml` | exact pre-commit parity |
 | `codeql.yml` | Python code scanning |
 | `security-audit.yml` | secrets, dependency, licence, and workflow policy |
@@ -99,6 +100,88 @@ Bounded claims — what is NOT claimed:
 - The estimates are advisory regime checks, not equilibrium, transport,
   or stability results; no benchmark, dataset, solver, controller, or
   experimental correlation exists in this repository.
+
+## Level-0 device physics
+
+Evidence record of the `level0_device_physics` capability
+(`computational_prototype`; design records:
+`docs/adr/0005-level0-device-physics.md` and
+`docs/adr/0006-shared-numerics-kernels.md`). Source: R. Paccagnella,
+"Relaxation models for single helical reversed field pinch plasmas",
+arXiv:1509.07307v2 (2015), eqs. 4–5 and the definitions of ``F`` and
+``Theta`` (open access), taken in its single-region limit as the
+Bessel-function model of the Taylor state; the Bessel functions and their
+zeros through the pinned shared kernel library (NIST DLMF 10.2.2, 10.21;
+OEIS A115368, A115369).
+
+What is exercised, all under the 100 % statement-and-branch coverage gate
+(`src/scpn_rfp_core/physics/`):
+
+- **Numerics substrate** (`numerics.py`): ``J0`` and ``J1`` and their
+  first zeros are the pinned shared kernel library's
+  (`scpn-reactor-kernels`, kernel `numerics_bessel`; commit and inventory
+  digest in `reactor-domain.json`, `kernel_library`); tests prove each
+  wrapper returns the library value bit for bit, that the zeros are the
+  library's constants with ``|J0(j_{0,1})|`` and ``|J1(j_{1,1})|`` at or
+  below `1e-14`, and that a library refusal (argument outside ``|x| <= 8``
+  or non-finite) is re-raised as `NumericsError` (a configuration error).
+  The manifest block is validated field by field and a contract test
+  proves the manifest, the `pyproject.toml` dependency, the installed
+  library version, `rust/Cargo.toml`, `rust/Cargo.lock` and the CI install
+  steps name one commit.
+- **Relaxed state** (`relaxation.py`; eqs. 4–5): the reversal threshold
+  ``Theta_rev = j_{0,1} / 2 = 1.2024...`` is the model's own identity and
+  the configuration's advisory ``1.2`` is proven to be its rounding;
+  ``F_bfm(Theta_rev) = 0`` exactly in double arithmetic; ``F_bfm -> 1`` as
+  ``Theta -> 0`` with a deviation bounded by ``Theta^2`` at four decades;
+  ``F_bfm`` is positive below the threshold, negative above it and
+  decreasing towards the pole; the reversal radius exists exactly when
+  ``Theta > Theta_rev`` and tends to ``a`` at the threshold; the product
+  identity ``B0 J1(2 Theta) = <B_phi> Theta`` holds to `1e-15` relative;
+  the model refuses ``Theta <= 0`` and ``Theta >= j_{1,1} / 2`` with the
+  stated reason; the edge-field advisory reproduces the configuration's
+  current cross-check.
+- **Radial profile** (`profiles.py`): on the axis ``B_theta = 0``,
+  ``B_phi = B0`` and ``q(0) = a / (Theta R0)`` without forming a quotient,
+  reproduced by the series at ``r / a = 1e-7`` to `1e-12` relative; at the
+  wall ``B_phi(a) / <B_phi> = F_bfm``, ``B_theta(a) = <B_phi> Theta`` and
+  ``q(a) = F_bfm a / (Theta R0)`` to `1e-14`; ``q(a)`` and ``B_phi(a)``
+  vanish at the threshold; the profile is monotone in ``B_phi`` and ``q``;
+  a station outside ``[0, 1]`` is refused.
+- A composed `Level0PhysicsRecord` (`scpn.rfp-level0-physics.v1` `1.0.0`)
+  with canonical bytes, SHA-256 digest, fixed non-claims and two pinned
+  reference digests (reversed and unreversed), built from the validated
+  configuration and explicit `ModelInputs` (the radial stations); the
+  record proves that every station beyond the reversal radius carries a
+  reversed toroidal field and none does below the threshold.
+- **Native parity**: the Rust crate in `rust/` mirrors every kernel with
+  identical operation order on the library's Rust crate at the pinned
+  commit; `tests/test_physics_native_parity.py` compares float64 bit
+  patterns over a 112-point grid of the relaxed state (including the
+  ``None`` reversal radius) and five stations each, plus the refusal
+  paths of the bindings.
+- **Benchmark**: `benchmarks/level0_physics.py` per the ecosystem
+  benchmark standard; results in `docs/benchmarks.md` and the committed
+  local artefact `benchmarks/results/level0_physics.local.json`.
+
+Bounded claims — what is NOT claimed:
+
+- Every number is a closed-form evaluation of the cylindrical
+  Bessel-function relaxed state on a synthetic configuration; no
+  equilibrium, transport, dynamo or stability equation is solved, and no
+  eigenvalue problem exists here.
+- The Bessel-function model is the fully relaxed single-region state; the
+  source itself records that real reversed-field pinches depart from it
+  (its ``F``–``Theta`` curve is steeper than the operational range), so the
+  model's reversal parameter is reported against the declared one as an
+  advisory, never as a prediction.
+- The anchors are identities of the model and the printed zeros of the
+  Bessel functions; they are not correlations with experimental data.
+- No confinement, fusion power, gain or breakeven statement is made.
+- No value describes, approximates or validates any real machine; the
+  benchmark measures per-point evaluation cost of two implementations of
+  the same closed forms, not physics.
+- Maturity stays `computational_prototype`.
 
 ## Diagnostic and clock semantics
 

@@ -22,21 +22,33 @@ configuration of the SCPN Phase Orchestrator reactor registry
 (relaxed-current torus).
 
 **Evidence maturity: `computational_prototype`** (per-capability; ADR 0002).
-Two capabilities are implemented: the device configuration model —
+Three capabilities are implemented: the device configuration model —
 validated parameter objects with documented consistency estimates,
 canonical serialisation, and a data-only SPO registry pin
-(evidence: `VALIDATION.md#device-configuration-model`) — and the
+(evidence: `VALIDATION.md#device-configuration-model`); the
 diagnostic and clock semantics model — synthetic channel and clock
 declarations aligned fail-closed with the pinned SPO observability
 catalogue (ADR 0003, evidence:
-`VALIDATION.md#diagnostic-and-clock-semantics`). No parameter set or
-channel describes any real machine or diagnostic; the claim inventory
-is empty and verified by the domain validator.
+`VALIDATION.md#diagnostic-and-clock-semantics`); and the level-0 device
+physics — the cylindrical Bessel-function relaxed state (force-free
+parameter, axis field, the model's reversal parameter against the
+declared one, reversal threshold and radius, edge-field comparison) and
+its field and safety-factor profile evaluated on the validated
+configuration through the pinned shared Bessel kernels of
+`scpn-reactor-kernels`, with optional native kernels proven bit-exact
+against the Python floor (ADR 0005 and ADR 0006, evidence:
+`VALIDATION.md#level-0-device-physics`). No parameter set or channel
+describes any real machine or diagnostic; the claim inventory is empty
+and verified by the domain validator.
 
 ## Scope
 
 This repository owns, for the reversed-field pinch device family:
 
+- the analytic device physics models: closed-form and 0-D models from the
+  reversed-field-pinch literature evaluated on the validated configuration
+  (no solver code, no FUSION seam); the Bessel kernels they use are the
+  shared kernel library's, pinned here, not owned here;
 - the device boundary: plant and experiment truth, pulse lifecycle, and
   configuration policy for toroidal devices confined by a relaxed,
   current-dominated state in which the plasma current generates most of the
@@ -79,8 +91,10 @@ This repository owns, for the reversed-field pinch device family:
 
 This repository is not machine-ready, not safety-certified, and not
 reactor-ready. It contains no implemented solver, no controller, no
-benchmark result, no experimental correlation, no dataset, and no published
-artefact, and no parameter set describes or validates any real machine. Operating-regime choices (multiple helicity,
+experimental correlation, no dataset, and no published artefact; the
+level-0 relaxed-state closed forms and their timing benchmark are
+computational prototypes, not validated equilibrium or confinement
+claims, and no parameter set describes or validates any real machine. Operating-regime choices (multiple helicity,
 quasi-single helicity) and fuel-cycle choices are configuration facets, not
 separate claims. No capability has reached any
 evidence-maturity state beyond `computational_prototype`.
@@ -102,9 +116,10 @@ Every gate currently active in this repository is listed in
 
 ```bash
 make lint        # ruff check + ruff format --check
-make typecheck   # mypy --strict tools tests
+make typecheck   # mypy --strict src tools tests benchmarks
 make test        # pytest with 100 % statement and branch coverage on tools/
 make validate    # domain manifest, descriptor, and inventory checks
+make rust        # format, lint and test the optional native kernels
 make preflight   # the full fail-closed gate sequence
 ```
 

@@ -41,6 +41,22 @@ this repository until it appears in the capability inventory with evidence.
   `VALIDATION.md#diagnostic-and-clock-semantics`). No ingress is
   declared; the SPO semantic-profile state remains `not_declared`.
 
+- **Level-0 device physics** (landed 2026-09-02) — the cylindrical
+  Bessel-function relaxed state of the reversed-field pinch evaluated on
+  the validated configuration: force-free parameter and axis field, the
+  model's reversal parameter against the declared one, the reversal
+  threshold ``j_{0,1} / 2`` (to which the configuration's advisory 1.2 is
+  now traced) and radius, the edge-field comparison with the declared
+  current, and the field and safety-factor profile at declared radial
+  stations; a canonical `Level0PhysicsRecord`, the shared Bessel kernels
+  pinned by commit and inventory digest, optional native kernels
+  bit-exact with the Python floor, and a standard-conformant benchmark;
+  `computational_prototype` (ADR 0005, ADR 0006,
+  `VALIDATION.md#level-0-device-physics`). Follow-ups under the same
+  capability: the two-region relaxed state of the filed source (needs
+  the Bessel functions of the second kind in the library), the
+  poloidal-flux and helicity integrals, and the resistive decay time.
+
 ## Planned (no implementation exists; ordering is not a commitment)
 1. **Safety-envelope declaration** — machine-readable operational envelope
    (current, circuit energy, relaxation and locked-mode margins) consumed

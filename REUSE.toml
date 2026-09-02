@@ -24,6 +24,8 @@ path = [
     "docs/assets/repo_header_field_profiles.png",
     "docs/assets/repo_header_f_theta.png",
     ".github/FUNDING.yml",
+    "rust/Cargo.lock",
+    "benchmarks/results/level0_physics.local.json",
 ]
 precedence = "aggregate"
 SPDX-FileCopyrightText = [

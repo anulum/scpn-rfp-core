@@ -14,6 +14,33 @@ SCPN RFP Core — CHANGELOG
 
 ### Added
 
+- Level-0 device physics (`src/scpn_rfp_core/physics/`), the third
+  implemented capability at `computational_prototype` (ADR 0005): the
+  cylindrical Bessel-function relaxed state — force-free parameter, axis
+  field, the model's reversal parameter against the declared one, the
+  reversal threshold ``j_{0,1} / 2`` and radius, the edge-field comparison
+  with the declared current — and the field and safety-factor profile at
+  declared radial stations, with a canonical `Level0PhysicsRecord`,
+  explicit `ModelInputs` and two pinned reference digests. The Bessel
+  functions are the shared kernel library's (`scpn-reactor-kernels`,
+  ADR 0006): the library is the one runtime dependency pinned to a commit
+  object in `pyproject.toml`, the manifest records the same commit, the
+  library's kernel-inventory digest and the consumed kernel in a new
+  optional `kernel_library` block enforced by the validator, and declares
+  the excluded domain `shared_physics_geometry_and_numerics_kernels`.
+  Native kernels (`rust/`, crate `scpn-rfp-rs` depending on the library's
+  Rust crate at the same commit, optional distribution `scpn-rfp-native`)
+  reproduce every value bit for bit, proven by parity tests; a
+  standard-conformant benchmark (`benchmarks/level0_physics.py`) with a
+  committed local artefact and `docs/benchmarks.md`. The manifest
+  declares the capability and the owned domain
+  `analytic_device_physics_models`; descriptor and inventory regenerated;
+  the envelope fixture regenerated for the new `manifest_sha256` (plan
+  bytes unchanged). Gates extended: `mypy` scope includes `benchmarks/`
+  (and `make typecheck` now covers `src/`), CI installs the package with
+  its pinned dependency, a `rust` CI job runs the crate gates, parity and
+  a benchmark smoke, `make rust` locally.
+
 - Diagnostic-plan depth: per-channel signal inventories, frame
   transformations with a fixed kind-admissibility table and connectivity
   rule, and a clock topology partitioning the physical clocks into rooted

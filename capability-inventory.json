@@ -9,16 +9,21 @@
       "evidence_maturity": "computational_prototype",
       "evidence_pointer": "VALIDATION.md#diagnostic-and-clock-semantics",
       "identifier": "diagnostic_clock_semantics"
+    },
+    {
+      "evidence_maturity": "computational_prototype",
+      "evidence_pointer": "VALIDATION.md#level-0-device-physics",
+      "identifier": "level0_device_physics"
     }
   ],
   "claims": [],
   "evidence_maturity": "computational_prototype",
-  "implemented_capability_count": 2,
+  "implemented_capability_count": 3,
   "project": "SCPN-RFP-CORE",
   "schema": "scpn.capability-inventory.v1",
   "schema_version": "1.0.0",
   "source": {
     "manifest_path": "reactor-domain.json",
-    "manifest_sha256": "d59b6a5edf3f0276f15d07aca1139e639ed03e34ec8ee80af1c550bc84fa36b0"
+    "manifest_sha256": "e604f643b5744f531f747e973fb4370767500812428c8aeae634345c9412225a"
   }
 }

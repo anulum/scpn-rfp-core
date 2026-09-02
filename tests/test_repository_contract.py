@@ -56,6 +56,22 @@ REQUIRED_PATHS = (
     "conftest.py",
     "docs/adr/0002-device-configuration-model.md",
     "docs/adr/0003-diagnostic-clock-semantics.md",
+    "docs/adr/0005-level0-device-physics.md",
+    "docs/adr/0006-shared-numerics-kernels.md",
+    "docs/benchmarks.md",
+    "benchmarks/level0_physics.py",
+    "benchmarks/results/level0_physics.local.json",
+    "rust/Cargo.toml",
+    "rust/Cargo.lock",
+    "rust/pyproject.toml",
+    "rust/src/lib.rs",
+    "rust/src/relaxation.rs",
+    "rust/src/profiles.rs",
+    "src/scpn_rfp_core/physics/__init__.py",
+    "src/scpn_rfp_core/physics/numerics.py",
+    "src/scpn_rfp_core/physics/relaxation.py",
+    "src/scpn_rfp_core/physics/profiles.py",
+    "src/scpn_rfp_core/physics/level0.py",
     "reactor-domain.json",
     "requirements-dev.txt",
     "src/scpn_rfp_core/__init__.py",
@@ -136,7 +152,17 @@ def test_manifest_declares_exact_configuration_assignment() -> None:
             "evidence_maturity": "computational_prototype",
             "evidence_pointer": "VALIDATION.md#diagnostic-and-clock-semantics",
         },
+        {
+            "identifier": "level0_device_physics",
+            "evidence_maturity": "computational_prototype",
+            "evidence_pointer": "VALIDATION.md#level-0-device-physics",
+        },
     ]
+    assert "analytic_device_physics_models" in manifest["owned_domains"]
+    assert {
+        "domain": "shared_physics_geometry_and_numerics_kernels",
+        "owner": "SCPN-REACTOR-KERNELS",
+    } in manifest["excluded_domains"]
     assert manifest["claims"] == []
 
 
@@ -150,7 +176,7 @@ def test_descriptor_and_inventory_embed_current_manifest_digest() -> None:
     assert descriptor["source"]["manifest_sha256"] == digest
     assert inventory["source"]["manifest_sha256"] == digest
     assert descriptor["lifecycle"]["state"] == "not_federated"
-    assert inventory["implemented_capability_count"] == 2
+    assert inventory["implemented_capability_count"] == 3
 
 
 def test_no_agent_state_trees_exist() -> None:
@@ -192,3 +218,34 @@ def test_package_agrees_with_manifest_truth() -> None:
 def test_typed_package_marker_exists() -> None:
     """The PEP 561 marker is present (empty by design, so no size check)."""
     assert (REPO / "src" / "scpn_rfp_core" / "py.typed").is_file()
+
+
+def test_kernel_library_pin_agrees_with_the_dependency_the_crate_and_the_package() -> (
+    None
+):
+    """One commit, one version, one inventory digest: manifest, pyproject, Cargo, CI."""
+    import tomllib
+
+    import scpn_reactor_kernels
+
+    manifest = load_json_object(REPO / "reactor-domain.json")
+    pin = manifest["kernel_library"]
+    assert pin["distribution"] == "scpn-reactor-kernels"
+    assert pin["kernels"] == ["numerics_bessel"]
+    project = tomllib.loads((REPO / "pyproject.toml").read_text(encoding="utf-8"))
+    assert project["project"]["dependencies"] == [
+        "scpn-reactor-kernels @ git+https://github.com/anulum/"
+        f"scpn-reactor-kernels.git@{pin['source_commit']}"
+    ]
+    assert scpn_reactor_kernels.__version__ == pin["version"]
+    cargo = tomllib.loads((REPO / "rust" / "Cargo.toml").read_text(encoding="utf-8"))
+    crate = cargo["dependencies"]["scpn-reactor-kernels-rs"]
+    assert crate["git"] == "https://github.com/anulum/scpn-reactor-kernels.git"
+    assert crate["rev"] == pin["source_commit"]
+    lock = (REPO / "rust" / "Cargo.lock").read_text(encoding="utf-8")
+    assert f"#{pin['source_commit']}" in lock
+    workflows = REPO / ".github" / "workflows"
+    for name in ("reusable-static-policy.yml", "reusable-tests.yml", "pre-commit.yml"):
+        assert "pip install -e ." in (workflows / name).read_text(encoding="utf-8"), (
+            name
+        )
