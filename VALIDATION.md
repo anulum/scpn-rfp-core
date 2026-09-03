@@ -292,3 +292,137 @@ gate:
   domain (`clk_facility` root, `clk_shot` member); multi-domain rules
   are exercised by test-constructed plans. Scopes are declarations;
   `mapping_state` stays `unmapped`.
+
+## Device 3D model
+
+Evidence record of the `device_3d_model` capability
+(`computational_prototype`; design record: `docs/adr/0007-device-3d-and-cad-models.md`;
+consumer contract: `docs/DEVICE_3D_MODEL_CONTRACT.md`).
+
+The unit circle, the tessellation primitives, the closed-mesh contract and
+the STL/GLB serialisers are consumed from the shared kernel library
+`scpn-reactor-kernels`, pinned in the manifest (`kernel_library`: commit
+object and kernel-inventory digest) and in `pyproject.toml`; their evidence
+is the library's, at its `VALIDATION.md#geometry-kernels`. What this
+repository exercises, all under the 100 % statement-and-branch coverage
+gate (`src/scpn_rfp_core/geometry/`):
+
+- **Device geometry** (`DeviceGeometry`): four SI parameters of the
+  envelope of the cylindrical periodic equivalent (vessel wall, conducting
+  shell, winding gap and thickness) with fail-closed positivity, canonical
+  bytes, SHA-256 digest and a strict parser refusing unknown fields and
+  non-finite literals; every rejection branch is tested. The layout
+  follows the relaxation literature's geometry (Paccagnella 2015, on
+  file: the ideal conducting shell surrounding the plasma, bounded at the
+  wall radius). No dimension of any device is used.
+- **Anchor**: the geometry tier carries a second fixture pair built from
+  the values that source prints — the aspect ratio `R/a = 5` of its single
+  helical eigenstates (Fig. 1, 3 and 8) and the reversal parameter
+  `F = -0.05` it calls the shallow reversed case. That source works
+  throughout in units normalised to the plasma minor radius and prints no
+  length in metres, so the anchored quantities are dimensionless; the
+  absolute radii that realise the ratio, the pinch parameter, the field
+  amplitude, the operational limits and every envelope thickness are
+  declared and said to be declared. Both tiers are checked against it: the
+  tessellated plasma column and the B-rep solid each return the printed
+  ratio from their own bounding box, the tessellated one exactly.
+  Reproducing a printed value is an anchor, never a claim about a machine.
+- **Device model** (`DeviceModel3D`, `scpn.rfp-3d-model.v1` `1.0.0`):
+  four bodies in the fixed order (plasma column, vacuum vessel,
+  conducting shell, toroidal-field winding) nested radially over the
+  periodic length `2 pi R0`; convergence of every body volume to its
+  analytic cylinder or tube; the fixed body inventory; determinism (two
+  builds equal, digests equal); canonical bytes and one pinned reference
+  digest (segments = 8) as an immutability fixture.
+- **Exports**: the device-side provenance record (`glb_extras`) is exactly
+  what the library's GLB carries as document `extras`; the bytes are
+  proven identical to the library serialisers called directly; the binary
+  STL and glTF 2.0 binary layouts are read back with minimal
+  specification-level readers; determinism of the bytes; the file writers.
+- **Native parity**: `tests/test_geometry_native_parity.py` builds the
+  four device bodies on the library's Python floor and compares float64
+  bit patterns of every vertex coordinate, the face index streams, the
+  signed volume and the surface area against the library's native module
+  (`scpn_reactor_kernels_native`); the consumer inherits the library's
+  parity rather than re-proving the kernels. The crate in `rust/` carries
+  physics only.
+- **Benchmark**: `benchmarks/device_model_3d.py` per the ecosystem
+  benchmark standard, measuring the library's Python floor (through the
+  validated device build) against the library's native kernels; results in
+  `docs/benchmarks.md` and the committed local artefact
+  `benchmarks/results/device_model_3d.local.json`.
+
+Bounded claims — what is NOT claimed:
+
+- The cylindrical periodic equivalent of the toroidal device is the
+  modelled object: the end caps of the cylinder primitives are an
+  artefact, and the toroidal curvature, the poloidal coil rings and the
+  shell penetrations are not modelled at this tier.
+- The plasma body is the Bessel-function-model domain of the level-0
+  physics, not an equilibrium boundary of the torus.
+- No material property, load, field or neutronic quantity is carried or
+  implied by any body, role or material token.
+- No value describes, approximates or validates any real machine; the
+  benchmark measures tessellation cost, not physics.
+- Exporting STL and GLB files does not federate, present or gate this
+  repository anywhere; the portfolio layer keeps that authority.
+- Maturity stays `computational_prototype`.
+
+## Device CAD model
+
+Evidence record of the `device_cad_model` capability
+(`computational_prototype`; design record: `docs/adr/0007-device-3d-and-cad-models.md`;
+the STEP surface of the consumer contract `docs/DEVICE_3D_MODEL_CONTRACT.md`).
+
+The B-rep, STEP, faceting and evidence kernels are the shared library's
+`cad` group (the same `kernel_library` pin; the dependency's optional
+`cad` extra); their evidence is the library's, at its
+`VALIDATION.md#cad-kernels`. What this repository exercises, all under the
+100 % statement-and-branch coverage gate (`src/scpn_rfp_core/geometry/cad.py`,
+`tests/test_geometry_cad.py`):
+
+- **Same design, same bodies**: the four B-rep bodies are built at the
+  names, roles, material tokens and extents of the tier-G1 model, proven
+  by an inventory comparison against `build_device_model`.
+- **B-rep measures against the analytic closed forms**: every body's
+  OpenCASCADE volume and surface area agree with the analytic cylinder or
+  tube forms within the library's measure tolerance `1e-9` relative,
+  fail-closed by construction of the record.
+- **Faceting evidence**: every body faceted at the declared deflections
+  (linear `1e-4 m`, angular `0.1 rad`) validates as a closed,
+  outward-oriented mesh of the G1 contract; the faceted volume deficit
+  against the analytic form stays within the declared bound `2 d / r`, and
+  the faceted volume agrees with the G1 reference mesh at the declared
+  eight segments within the exact polygon-deficit bound.
+- **Placement identities**: the four bodies nest radially (plasma edge,
+  vessel, shell, winding) and every body spans the full periodic length,
+  read from the B-rep bounding boxes.
+- **STEP export**: the written file is exactly the byte string whose
+  SHA-256 the record carries as `step_sha256`; two builds of the same
+  design are byte-identical in the pinned back-end environment; a
+  re-import in a separate reader process reproduces every body volume
+  within `1e-9`.
+- **Record**: `scpn.rfp-cad-model.v1` `1.0.0` with canonical bytes,
+  SHA-256 digest and fixed non-claims; one pinned reference digest in the
+  reference back-end environment (cadquery 2.8.0, OCP 7.9.3.1) as an
+  immutability fixture; invalid segments, invalid deflections, a foreign
+  body inventory, a foreign manifest schema and a malformed STEP digest
+  are refused.
+- **Benchmark**: `benchmarks/device_model_cad.py` per the ecosystem
+  benchmark standard (build, export, facet and full record build);
+  results in `docs/benchmarks.md` and the committed local artefact
+  `benchmarks/results/device_model_cad.local.json`.
+
+Bounded claims — what is NOT claimed:
+
+- The bodies are exact analytic solids of a synthetic design built by a
+  pinned third-party kernel: not an engineering model, no equilibrium
+  boundary, no manufacturing drawing; the cylindrical periodic equivalent
+  is the modelled object (see the tier-G1 non-claims).
+- Determinism of the STEP bytes is claimed within the pinned back-end
+  environment only; identity across OpenCASCADE or gmsh versions is not
+  claimed, and a back-end bump re-pins the record digest as a governed
+  data change.
+- No value describes, approximates or validates any real machine; the
+  benchmark measures build, export and faceting cost, not physics.
+- Maturity stays `computational_prototype`.

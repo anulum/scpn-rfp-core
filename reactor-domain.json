@@ -14,6 +14,16 @@
       "evidence_maturity": "computational_prototype",
       "evidence_pointer": "VALIDATION.md#level-0-device-physics",
       "identifier": "level0_device_physics"
+    },
+    {
+      "evidence_maturity": "computational_prototype",
+      "evidence_pointer": "VALIDATION.md#device-3d-model",
+      "identifier": "device_3d_model"
+    },
+    {
+      "evidence_maturity": "computational_prototype",
+      "evidence_pointer": "VALIDATION.md#device-cad-model",
+      "identifier": "device_cad_model"
     }
   ],
   "claims": [],
@@ -78,11 +88,19 @@
   },
   "kernel_library": {
     "distribution": "scpn-reactor-kernels",
-    "inventory_sha256": "a5ec0daf5c17957652d649f31a1d6810f47db1529c2ed47d3c8b0a74601ed71a",
+    "inventory_sha256": "8b409c63435088f2e36d66322ec7a379243474bf8b99856100e8fc4c8add679a",
     "kernels": [
+      "cad_brep_solids",
+      "cad_evidence",
+      "cad_faceting",
+      "cad_step_export",
+      "geometry_exports",
+      "geometry_mesh_contract",
+      "geometry_primitives",
+      "geometry_unit_circle",
       "numerics_bessel"
     ],
-    "source_commit": "4a03c58ec936c45c0874fab76bee1b2dfdf082c2",
+    "source_commit": "0f76b8caa7d2de8f8e8aae6c9927cebaf9bf9cbd",
     "version": "0.1.0.dev0"
   },
   "license": "AGPL-3.0-or-later",
@@ -95,7 +113,7 @@
     "not safety-certified",
     "not autonomous-plant-ready",
     "not commercially reactor-ready",
-    "no implemented solver, controller, dataset, or published artefact; the level-0 Bessel-function relaxed state (evaluated on the pinned shared numerics kernels) and its timing benchmark are computational prototypes, not validated equilibrium or confinement claims",
+    "no implemented solver, controller, dataset, or published artefact; the level-0 Bessel-function relaxed state (evaluated on the pinned shared numerics kernels), the analytic-surface device 3D model of the cylindrical periodic equivalent, the B-rep CAD model of the same design (built by the pinned third-party OpenCASCADE kernel, checked against the analytic closed forms, STEP deterministic only within the pinned back-end environment) and their timing benchmarks are computational prototypes, not validated equilibrium or confinement claims",
     "no experimental correlation",
     "no parameter set describes or validates any real machine"
   ],

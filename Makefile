@@ -14,7 +14,7 @@ PYTHON := $(VENV)/python
 venv:
 	python3 -m venv .venv
 	$(VENV)/pip install --require-virtualenv -r requirements-dev.txt
-	$(VENV)/pip install --require-virtualenv -e .
+	$(VENV)/pip install --require-virtualenv -e ".[cad]"
 
 lint:
 	$(VENV)/ruff check .
@@ -32,7 +32,7 @@ validate:
 	$(PYTHON) tools/generate_capability_inventory.py --check
 
 rust:
-	cd rust && cargo fmt --check && cargo clippy --all-targets --features python -- -D warnings && cargo test
+	cd rust && cargo fmt --check && cargo clippy --all-targets --features python -- -D warnings && cargo doc --no-deps --features python && cargo test
 
 docs:
 	$(PYTHON) tools/preflight.py --only docs

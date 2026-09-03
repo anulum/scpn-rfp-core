@@ -35,3 +35,11 @@ class NumericsError(DeviceConfigurationError):
     re-raises that refusal under the device error type with the library's
     message.
     """
+
+
+class DeviceGeometryError(ValueError):
+    """Raised when a device geometry or mesh value violates a model invariant.
+
+    Every rejection carries the offending field and the violated bound in
+    its message; nothing is clamped or silently corrected.
+    """

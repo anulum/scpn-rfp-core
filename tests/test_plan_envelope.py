@@ -42,7 +42,7 @@ from scpn_rfp_core.plan_envelope import (
 )
 
 FIXTURE = Path(__file__).parent / "data" / "plan_envelope_fixture.json"
-FIXTURE_SHA256 = "6dd995ac4d58fdaa5c2d00bd91f5d718c71ff69f06919f6016151aa240ca9330"
+FIXTURE_SHA256 = "794020dc6e2711aaf7aa39f782785072991ac1160ed00a276585c3aba3904ae8"
 
 
 def fixture_document() -> dict[str, Any]:

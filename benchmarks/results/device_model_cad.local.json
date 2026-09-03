@@ -1,0 +1,80 @@
+{
+  "generated_at": "2026-09-03T19:44:24.824625+00:00",
+  "label": "local",
+  "parameters": {
+    "repeats": 10,
+    "warmup": 2
+  },
+  "platform": {
+    "commit": "ec1d8c01caff5a54a50c4efc35a71db48028b1dc",
+    "cpu_model": "11th Gen Intel(R) Core(TM) i5-11600K @ 3.90GHz",
+    "isolated_cores": false,
+    "load_average_1min_at_start": "7.94",
+    "machine": "x86_64",
+    "platform": "Linux-7.0.0-30-generic-x86_64-with-glibc2.39",
+    "python": "3.12.3"
+  },
+  "results": [
+    {
+      "backend": "cadquery_ocp",
+      "name": "brep_build_and_manifest",
+      "requires": "optional extra scpn-reactor-kernels[cad]",
+      "stats": {
+        "max_ms_per_operation": 27.836985,
+        "mean_ms_per_operation": 22.9490558,
+        "min_ms_per_operation": 20.582835,
+        "p50_ms_per_operation": 22.579951,
+        "p95_ms_per_operation": 27.836985,
+        "p99_ms_per_operation": 27.836985,
+        "throughput_operations_per_s": 44.28707573368959
+      },
+      "status": "measured"
+    },
+    {
+      "backend": "cadquery_ocp",
+      "name": "step_export_normalised",
+      "requires": "optional extra scpn-reactor-kernels[cad]",
+      "stats": {
+        "max_ms_per_operation": 8.97821,
+        "mean_ms_per_operation": 6.8880448,
+        "min_ms_per_operation": 5.234336,
+        "p50_ms_per_operation": 6.490854,
+        "p95_ms_per_operation": 8.97821,
+        "p99_ms_per_operation": 8.97821,
+        "throughput_operations_per_s": 154.06293224281427
+      },
+      "status": "measured"
+    },
+    {
+      "backend": "cadquery_ocp",
+      "name": "facet_four_bodies",
+      "requires": "optional extra scpn-reactor-kernels[cad]",
+      "stats": {
+        "max_ms_per_operation": 71.722744,
+        "mean_ms_per_operation": 65.2853724,
+        "min_ms_per_operation": 59.33266,
+        "p50_ms_per_operation": 64.372953,
+        "p95_ms_per_operation": 71.722744,
+        "p99_ms_per_operation": 71.722744,
+        "throughput_operations_per_s": 15.534474548650891
+      },
+      "status": "measured"
+    },
+    {
+      "backend": "cadquery_ocp",
+      "name": "device_cad_record_build",
+      "requires": "optional extra scpn-reactor-kernels[cad]",
+      "stats": {
+        "max_ms_per_operation": 282.320499,
+        "mean_ms_per_operation": 224.1936448,
+        "min_ms_per_operation": 196.144883,
+        "p50_ms_per_operation": 211.798789,
+        "p95_ms_per_operation": 282.320499,
+        "p99_ms_per_operation": 282.320499,
+        "throughput_operations_per_s": 4.72146231204372
+      },
+      "status": "measured"
+    }
+  ],
+  "schema": "scpn-rfp-core.device-model-cad-benchmark.v1"
+}

@@ -1,0 +1,53 @@
+{
+  "generated_at": "2026-09-03T19:44:18.861491+00:00",
+  "label": "local",
+  "parameters": {
+    "repeats": 20,
+    "segments": 4096,
+    "warmup": 3
+  },
+  "platform": {
+    "commit": "ec1d8c01caff5a54a50c4efc35a71db48028b1dc",
+    "cpu_model": "11th Gen Intel(R) Core(TM) i5-11600K @ 3.90GHz",
+    "isolated_cores": false,
+    "load_average_1min_at_start": "8.11",
+    "machine": "x86_64",
+    "platform": "Linux-7.0.0-30-generic-x86_64-with-glibc2.39",
+    "python": "3.12.3"
+  },
+  "results": [
+    {
+      "backend": "python_floor",
+      "name": "device_tessellation_and_measures",
+      "stats": {
+        "faces_per_pass": 114688.0,
+        "max_us_per_face": 7.208773646763393,
+        "mean_us_per_face": 6.290992186628069,
+        "min_us_per_face": 5.6144580078125,
+        "p50_us_per_face": 6.282951337541853,
+        "p95_us_per_face": 6.989029148646764,
+        "p99_us_per_face": 7.208773646763393,
+        "throughput_faces_per_s": 159160.8698327498
+      },
+      "status": "measured"
+    },
+    {
+      "backend": "rust_native",
+      "name": "device_tessellation_and_measures",
+      "requires": "optional native build of the pinned kernel library (its rust/, maturin)",
+      "speedup_p50_vs_python_floor": 32.577039312348674,
+      "stats": {
+        "faces_per_pass": 114688.0,
+        "max_us_per_face": 0.2441704275948661,
+        "mean_us_per_face": 0.1950590785435268,
+        "min_us_per_face": 0.1632105451311384,
+        "p50_us_per_face": 0.1928644060407366,
+        "p95_us_per_face": 0.236038330078125,
+        "p99_us_per_face": 0.2441704275948661,
+        "throughput_faces_per_s": 5184989.9135291
+      },
+      "status": "measured"
+    }
+  ],
+  "schema": "scpn-rfp-core.device-model-3d-benchmark.v1"
+}
