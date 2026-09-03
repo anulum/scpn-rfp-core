@@ -38,14 +38,20 @@ LEVEL0_SCHEMA_VERSION: Final = "1.0.0"
 #: The plan's radial stations ``r / a``.
 LEVEL0_RADIAL_STATIONS: Final = (0.0, 0.25, 0.5, 0.75, 1.0)
 LEVEL0_NON_CLAIMS: Final = (
-    "closed-form evaluation of the cylindrical Bessel-function relaxed state "
-    "on a synthetic configuration",
-    "the Bessel-function model is the fully relaxed single-region state; real "
-    "reversed-field pinches depart from it and no equation is solved: no "
-    "equilibrium, transport, dynamo or stability calculation",
+    (
+        "closed-form evaluation of the cylindrical Bessel-function relaxed state "
+        "on a synthetic configuration"
+    ),
+    (
+        "the Bessel-function model is the fully relaxed single-region state; real "
+        "reversed-field pinches depart from it and no equation is solved: no "
+        "equilibrium, transport, dynamo or stability calculation"
+    ),
     "no confinement, fusion power, gain or breakeven statement",
-    "no value describes or validates any real machine; the anchors reproduce "
-    "identities of the model and the printed zeros of the Bessel functions",
+    (
+        "no value describes or validates any real machine; the anchors reproduce "
+        "identities of the model and the printed zeros of the Bessel functions"
+    ),
 )
 
 
