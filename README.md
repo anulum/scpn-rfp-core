@@ -22,7 +22,7 @@ configuration of the SCPN Phase Orchestrator reactor registry
 (relaxed-current torus).
 
 **Evidence maturity: `computational_prototype`** (per-capability; ADR 0002).
-Three capabilities are implemented: the device configuration model —
+Five capabilities are implemented: the device configuration model —
 validated parameter objects with documented consistency estimates,
 canonical serialisation, and a data-only SPO registry pin
 (evidence: `VALIDATION.md#device-configuration-model`); the
@@ -37,7 +37,15 @@ its field and safety-factor profile evaluated on the validated
 configuration through the pinned shared Bessel kernels of
 `scpn-reactor-kernels`, with optional native kernels proven bit-exact
 against the Python floor (ADR 0005 and ADR 0006, evidence:
-`VALIDATION.md#level-0-device-physics`). No parameter set or channel
+`VALIDATION.md#level-0-device-physics`); the device 3D model — the
+validated device geometry of the cylindrical periodic equivalent
+tessellated into closed triangle meshes and exported as binary STL and
+glTF 2.0 binary through the shared kernel library; and the device CAD
+model — the same bodies as B-rep solids built through the library's `cad`
+group, checked fail-closed against the analytic closed forms and exported
+as a normalised deterministic STEP file (ADR 0007, evidence:
+`VALIDATION.md#device-3d-model` and `VALIDATION.md#device-cad-model`,
+consumer contract `docs/DEVICE_3D_MODEL_CONTRACT.md`). No parameter set or channel
 describes any real machine or diagnostic; the claim inventory is empty
 and verified by the domain validator.
 

@@ -91,8 +91,9 @@ SCPN-CONTROL ──admitted ControlAction──► independent machine protectio
 | `docs/CONTROL_ADAPTER_SPECIFICATION.md` | device-owned adapter contract |
 | `docs/THREAT_MODEL.md` | assets, trust boundaries, misuse paths |
 | `docs/adr/0001-repository-boundary.md` | boundary decision record |
+| `src/scpn_rfp_core/` | the package: configuration, observability, plan envelope, level-0 physics and device geometry tiers |
 | `tools/` | validators, derivation tools, preflight orchestrator |
-| `tests/` | statement- and branch-complete tests for `tools/` |
+| `tests/` | statement- and branch-complete tests for `src/` and `tools/` |
 | `.github/workflows/` | read-only CI definitions (no publication) |
 
 ## Contract surfaces and versioning
