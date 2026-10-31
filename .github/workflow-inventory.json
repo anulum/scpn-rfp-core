@@ -6,7 +6,6 @@
   },
   "coordinator": "ci.yml",
   "omitted_categories": [
-    3,
     5,
     6,
     7,
@@ -26,6 +25,7 @@
       "jobs": [
         "static-policy",
         "tests",
+        "package",
         "gate"
       ],
       "kind": "coordinator",
@@ -50,6 +50,15 @@
       ],
       "kind": "reusable",
       "owner": "unit, component, scientific quality, native parity and benchmark smoke"
+    },
+    {
+      "category": 3,
+      "file": "reusable-package.yml",
+      "jobs": [
+        "run"
+      ],
+      "kind": "reusable",
+      "owner": "build and installed-wheel verification"
     },
     {
       "category": 2,

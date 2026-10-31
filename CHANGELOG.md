@@ -12,6 +12,19 @@ SCPN RFP Core — CHANGELOG
 
 ## [Unreleased]
 
+### Fixed
+
+- `build_device_cad` raises `CadUnavailableError` when the optional CAD
+  back-end is missing, as documented; it previously re-raised it as
+  `DeviceGeometryError`.
+
+### Added
+
+- An installed-wheel job in the required CI gate: the wheel is built
+  without build isolation from hash-locked `setuptools` and `wheel`
+  (`requirements-build.txt`), installed into clean base and CAD environments
+  and exercised from outside the checkout by `tools/installed_package_check.py`.
+
 ### Security
 
 - `configuration_from_bytes` and `geometry_from_bytes` refuse duplicate JSON
