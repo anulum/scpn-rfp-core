@@ -25,6 +25,10 @@ SCPN RFP Core — CHANGELOG
 
 ### Changed
 
+- The documentation gate reads only files git would publish, so a
+  git-ignored private tree no longer fails it locally. Hooks without their own
+  stage list run before a commit and before a push only; commit-msg runs the
+  trailer guard alone.
 - Local and hosted gates check the same cohorts: CI now type-checks
   `benchmarks/` and `conftest.py` like the local targets, `make test` measures
   `src/` as CI does, and `make validate` runs the workflow audit. A parity test
