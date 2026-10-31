@@ -45,6 +45,10 @@ SCPN RFP Core — CHANGELOG
 
 ### Changed
 
+- The edge-field docstring states its convention correctly: `0.2 I_p[MA] / a[m]`
+  is exact under the pre-2019 SI value `mu0 = 4 pi x 10^-7`, not in today's SI,
+  where the measured permeability differs by about `5.4 x 10^-10` relative;
+  the value is unchanged and the convention is bound by a test.
 - `scpn_rfp_core.observability` is now a package with one module per
   responsibility — vocabulary, catalogue binding, frames, clocks, signals and
   channels, plan composition, record parsing — behind the unchanged public

@@ -157,3 +157,15 @@ def test_invalid_limits_are_rejected(
     """Each limit violation is rejected with its field name."""
     with pytest.raises(DeviceConfigurationError, match=fragment):
         synthetic_limits(**overrides)
+
+
+#: CODATA 2018 recommended vacuum permeability, H/m (measured since 2019).
+CODATA_2018_MU0 = 1.25663706212e-6
+
+
+def test_edge_field_coefficient_is_the_pre_2019_mu0_convention() -> None:
+    """0.2 T m / MA is mu0 / (2 pi) under mu0 = 4 pi x 10^-7, as documented."""
+    convention = 4.0e-7 * math.pi
+    assert math.isclose(convention / (2.0 * math.pi) * 1.0e6, 0.2, rel_tol=1e-15)
+    relative = (CODATA_2018_MU0 - convention) / CODATA_2018_MU0
+    assert 5.0e-10 < relative < 6.0e-10

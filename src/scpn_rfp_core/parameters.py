@@ -230,7 +230,12 @@ class OperationalLimits:
         -------
         float
             ``B_theta(a) = mu0 I_p / (2 pi a)`` in tesla, evaluated as
-            ``0.2 I_p[MA] / a[m]`` (exact in SI with
-            ``mu0 = 4 pi x 10^-7``).
+            ``0.2 I_p[MA] / a[m]``. The coefficient is exact under the
+            pre-2019 SI convention ``mu0 = 4 pi x 10^-7`` H/m that the
+            cited relaxation literature uses; since the 2019 SI revision
+            the permeability is measured (CODATA 2018
+            ``1.25663706212 x 10^-6``), about ``5.4 x 10^-10`` relative
+            above the convention, which moves this field by the same
+            relative amount.
         """
         return 0.2 * self.plasma_current_ma / geometry.minor_radius_m
