@@ -9,7 +9,7 @@
 """Field and safety-factor profiles of the Bessel-function relaxed state.
 
 At the radius ``r = (r/a) a`` of the cylinder the relaxed state of
-R. Paccagnella, arXiv:1509.07307v2 (2015), eq. 5 (core region, taken
+R. Paccagnella, arXiv:1509.07307v2 (2016), eq. 5 (core region, taken
 over the whole minor radius) has ``B_phi(r) = B0 J0(mu r)`` and
 ``B_theta(r) = B0 J1(mu r)`` with ``mu = 2 Theta / a``, so the argument
 ``mu r`` equals ``2 Theta (r/a)`` and is evaluated in that form. The

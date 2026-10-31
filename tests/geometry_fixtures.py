@@ -16,14 +16,14 @@ model, describing no machine.
 The *anchor* pair carries the values printed by Paccagnella, "Relaxation
 models for single helical reversed field pinch plasmas", arXiv:1509.07307
 (2015), already on file: the aspect ratio ``R/a = 5`` of the eigenstates in
-its Fig. 1, 3 and 8, and the reversal parameter ``F = -0.05`` that the same
-figures call the shallow reversed case. That source works throughout in
-units normalised to the plasma minor radius, so it prints no length in
-metres; the anchored quantities are therefore dimensionless, which is what
-this family has to anchor on. The absolute radii, the pinch parameter, the
-field amplitude, the operational limits and every envelope thickness are
-declared here and marked as declared. Reproducing a printed value is an
-anchor, never a claim about any machine.
+its Fig. 1, 3 and 8, and the reversal parameter ``F = -0.05`` used in those
+figures, which the Fig. 3 caption calls the shallow reversed case. That source
+works throughout in units normalised to the plasma minor radius, so it prints
+no length in metres; the anchored quantities are therefore dimensionless,
+which is what this family has to anchor on. The absolute radii, the pinch
+parameter, the field amplitude, the operational limits and every envelope
+thickness are declared here and marked as declared. Reproducing a printed
+value is an anchor, never a claim about any machine.
 """
 
 from __future__ import annotations

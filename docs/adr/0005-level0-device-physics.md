@@ -25,7 +25,7 @@ forms from the family's own literature, evaluated on the validated
 configuration, without solving any equation. The force-free relaxed state
 of the reversed-field pinch in its cylindrical Bessel-function form is
 stated in an open-access source (R. Paccagnella, "Relaxation models for
-single helical reversed field pinch plasmas", arXiv:1509.07307v2 (2015),
+single helical reversed field pinch plasmas", arXiv:1509.07307v2 (2016),
 eqs. 4–5, after J. B. Taylor), which also defines the reversal and pinch
 parameters ``F`` and ``Theta`` as the wall fields over the cross-section
 average of the toroidal field. Taylor's original papers (Phys. Rev. Lett.

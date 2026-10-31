@@ -30,7 +30,7 @@ What the cylinder primitives CAN carry honestly is the cylindrical
 periodic equivalent — which is the geometry of the level-0
 Bessel-function model itself: plasma column at r ≤ a, the wall at r = a,
 the close-fitting ideal conducting shell the relaxation literature
-requires (R. Paccagnella, arXiv:1509.07307v2 (2015): "the presence of an
+requires (R. Paccagnella, arXiv:1509.07307v2 (2016): "the presence of an
 ideal shell surrounding the plasma is crucial to preserve global
 invariants"), and the toroidal-field winding as a solenoid outside it,
 over the periodic length 2πR0. The toroidal curvature, the poloidal coil

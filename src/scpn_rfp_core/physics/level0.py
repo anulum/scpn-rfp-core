@@ -9,7 +9,7 @@
 """Level-0 physics record of one validated reversed-field-pinch configuration.
 
 The record composes the Bessel-function relaxed state (R. Paccagnella,
-arXiv:1509.07307v2 (2015), eqs. 4-5, taken as the single-region Taylor
+arXiv:1509.07307v2 (2016), eqs. 4-5, taken as the single-region Taylor
 state) and its radial profile at the declared stations on the validated
 :class:`~scpn_rfp_core.configuration.DeviceConfiguration`. It serialises
 canonically with a SHA-256 digest and states its own non-claims: every

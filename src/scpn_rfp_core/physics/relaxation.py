@@ -9,8 +9,10 @@
 """The cylindrical force-free relaxed state (Bessel-function model).
 
 The relaxed state of a reversed-field pinch satisfies the force-free
-condition ``curl B = alpha B`` with constant ``alpha`` (R. Paccagnella,
-arXiv:1509.07307v2 (2015), eq. 4, after J. B. Taylor); in cylindrical
+condition ``(curl B)_parallel = alpha(r) B`` (R. Paccagnella,
+arXiv:1509.07307v2 (2016), eq. 4, after J. B. Taylor). Taking ``alpha``
+constant, as the source does in its core region, gives ``curl B = alpha B``;
+in cylindrical
 geometry and axisymmetry its regular solution is the Bessel pair
 ``B = (0, B0 J1(alpha r), B0 J0(alpha r))`` in ``(r, theta, phi)``
 (eq. 5, core region). Taking that single region over the whole minor

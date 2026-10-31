@@ -16,7 +16,7 @@ the cylindrical periodic equivalent of the toroidal device: the vacuum
 vessel wall at the plasma edge, the close-fitting conducting shell the
 relaxation physics requires, and the toroidal-field winding outside it.
 The layout follows the relaxation literature's geometry (R. Paccagnella,
-arXiv:1509.07307v2 (2015): an ideal shell surrounding the plasma,
+arXiv:1509.07307v2 (2016): an ideal shell surrounding the plasma,
 bounded at the wall radius); no dimension of any device is used, and
 every parameter set is synthetic. Validation is fail-closed,
 serialisation is canonical, and the SHA-256 digest identifies the exact

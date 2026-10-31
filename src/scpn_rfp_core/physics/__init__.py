@@ -9,7 +9,7 @@
 """Level-0 device physics of the reversed-field-pinch family.
 
 The cylindrical force-free relaxed state in its Bessel-function form
-(R. Paccagnella, arXiv:1509.07307v2 (2015), eqs. 4-5, after J. B. Taylor)
+(R. Paccagnella, arXiv:1509.07307v2 (2016), eqs. 4-5, after J. B. Taylor)
 evaluated on the validated device configuration: the force-free parameter
 and on-axis field, the model's reversal parameter ``F_bfm(Theta)`` against
 the declared ``F``, the reversal threshold and radius, the edge-field
