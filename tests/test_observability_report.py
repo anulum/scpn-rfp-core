@@ -84,7 +84,8 @@ def test_report_flags_band_outside_typical_range() -> None:
     )
     findings = plan.consistency_report()
     assert len(findings) == 1
-    assert "Ortolani" in findings[0].message
+    assert "declared" in findings[0].message
+    assert "Ortolani" not in findings[0].message
 
 
 def test_report_flags_clock_coarser_than_sampling() -> None:

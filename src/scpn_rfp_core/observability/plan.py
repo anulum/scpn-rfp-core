@@ -416,9 +416,9 @@ class DiagnosticPlan:
                         message=(
                             f"declared tearing/relaxation band "
                             f"{channel.max_signal_frequency_hz:.1f} "
-                            "Hz is outside the RFP tearing and relaxation "
-                            "fluctuation scale 1-500 kHz (Ortolani and Schnack "
-                            "1993)"
+                            "Hz is outside the declared tearing/relaxation "
+                            "design band 1-500 kHz (synthetic; not checked "
+                            "against a source on file)"
                         ),
                     )
                 )
@@ -429,8 +429,8 @@ class DiagnosticPlan:
                         message=(
                             "acquisition window "
                             f"{channel.acquisition_duration_s:.2e} s is "
-                            "longer than the RFP discharge scale of up to ~1 s "
-                            "(Ortolani and Schnack 1993)"
+                            "longer than the declared ~1 s discharge-duration "
+                            "bound (synthetic; not checked against a source on file)"
                         ),
                     )
                 )

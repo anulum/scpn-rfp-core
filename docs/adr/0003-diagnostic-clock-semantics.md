@@ -49,7 +49,12 @@ The `closed.recurrent_transient` candidate is catalogue-restricted to the tokama
    facility monotonic clock, noncyclic to either non-simulation clock).
 4. Timing is fail-closed where physics fixes the bound: the Nyquist
    criterion for cyclic channels. The device-typical band check is
-   advisory only: the RFP tearing and relaxation fluctuation scale 1–500 kHz (S. Ortolani, D. D. Schnack, Magnetohydrodynamics of Plasma Relaxation, 1993).
+   advisory only and compares against declared synthetic design bounds: a
+   tearing/relaxation band of 1–500 kHz and a ~1 s discharge-duration bound.
+   An earlier version credited them to S. Ortolani and D. D. Schnack,
+   Magnetohydrodynamics of Plasma Relaxation (1993), which is not on file
+   (the filed Paccagnella preprint prints no frequency or duration), so they
+   were never checked against it (attribution removed 2026-10-31).
 5. The reference plan mirrors canonical practice with synthetic
    declarations: a flux-loop equilibrium set and a Rogowski plasma-current monitor (noncyclic against the discharge epoch), a toroidal magnetic-probe array for tearing and relaxation activity (derived cyclic against the facility clock), and the model-owned synthetic oscillator (simulation clock). Every applicable candidate must be
    planned or explicitly deferred with a reason; every channel is

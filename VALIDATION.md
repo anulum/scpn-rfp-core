@@ -209,8 +209,13 @@ What is exercised, all under the 100 % statement-and-branch coverage gate:
   release is rejected.
 - A reference plan mirroring canonical practice with synthetic
   declarations: flux loops, Rogowski coil, toroidal probe array, synthetic oscillator, each bound to its clock domain.
-- A documented advisory band check with its source stated in the code:
-  RFP tearing and relaxation fluctuations in the 1–500 kHz scale (Ortolani and Schnack 1993); findings are reported, never clamped.
+- Advisory checks against declared synthetic design bounds: a
+  tearing/relaxation band of 1–500 kHz and a ~1 s discharge-duration bound.
+  They were earlier credited to S. Ortolani and D. D. Schnack,
+  Magnetohydrodynamics of Plasma Relaxation (1993), which is not on file
+  (the filed Paccagnella preprint prints no frequency or duration), so they
+  were never checked against it; the attribution was removed (2026-10-31).
+  Findings are reported, never clamped.
 - Canonical serialisation (sorted keys, NaN/infinity rejected on both
   emit and parse), SHA-256 digest identity, and a strict round-trip
   parser that refuses unknown fields.
