@@ -95,7 +95,7 @@ REQUIRED_PATHS = (
     "src/scpn_rfp_core/__init__.py",
     "src/scpn_rfp_core/configuration.py",
     "src/scpn_rfp_core/errors.py",
-    "src/scpn_rfp_core/observability.py",
+    "src/scpn_rfp_core/observability/__init__.py",
     "src/scpn_rfp_core/plan_envelope.py",
     "tests/data/plan_envelope_fixture.json",
     "src/scpn_rfp_core/parameters.py",
