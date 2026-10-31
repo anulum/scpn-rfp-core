@@ -109,8 +109,9 @@ Evidence record of the `level0_device_physics` capability
 `docs/adr/0005-level0-device-physics.md` and
 `docs/adr/0006-shared-numerics-kernels.md`). Source: R. Paccagnella,
 "Relaxation models for single helical reversed field pinch plasmas",
-arXiv:1509.07307v2 (2015), eqs. 4–5 and the definitions of ``F`` and
-``Theta`` (open access), taken in its single-region limit as the
+arXiv:1509.07307v2 (2015), eqs. 4–5 (eq. 5 on PDF p. 8) and the
+definitions of ``F`` (PDF pp. 4 and 6) and ``Theta`` (PDF p. 6) (open
+access), taken in its single-region limit (``r_c = a``) as the
 Bessel-function model of the Taylor state; the Bessel functions and their
 zeros through the pinned shared kernel library (NIST DLMF 10.2.2, 10.21;
 OEIS A115368, A115369).
