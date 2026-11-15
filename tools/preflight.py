@@ -209,34 +209,46 @@ def docs_gate(root: Path) -> GateResult:
     return GateResult("docs", passed=not findings, detail="; ".join(findings))
 
 
-def monorepo_map_path(root: Path) -> Path | None:
+def monorepo_map_path(root: Path, *, search_limit: Path | None = None) -> Path | None:
     """Locate the shared reactor-family map above one repository root.
 
     Parameters
     ----------
     root
         Repository root to search upward from.
+    search_limit
+        Optional ancestor at which the upward search stops; a map directly
+        under it is still found. ``None`` searches the whole parent chain.
+        Tests pass their temporary root so that an ambient map above it
+        cannot leak into a standalone-checkout case.
 
     Returns
     -------
     Path or None
         The first existing map file found walking the parent chain, or
-        ``None`` when no ancestor carries it.
+        ``None`` when no ancestor up to the limit carries it.
     """
+    limit = None if search_limit is None else search_limit.resolve()
     for parent in root.resolve().parents:
         candidate = parent / MAP_RELATIVE_TO_MONOREPO
         if candidate.is_file():
             return candidate
+        if parent == limit:
+            break
     return None
 
 
-def build_gate_plan(root: Path) -> list[tuple[str, list[str] | None]]:
+def build_gate_plan(
+    root: Path, *, map_search_limit: Path | None = None
+) -> list[tuple[str, list[str] | None]]:
     """Build the ordered gate plan for one repository root.
 
     Parameters
     ----------
     root
         Repository root the gates run against.
+    map_search_limit
+        Upper limit for the shared-map search; see :func:`monorepo_map_path`.
 
     Returns
     -------
@@ -247,7 +259,7 @@ def build_gate_plan(root: Path) -> list[tuple[str, list[str] | None]]:
     bin_dir = root / ".venv" / "bin"
     python = str(bin_dir / "python")
     validate = [python, "tools/validate_reactor_domain.py", "reactor-domain.json"]
-    map_path = monorepo_map_path(root)
+    map_path = monorepo_map_path(root, search_limit=map_search_limit)
     if map_path is not None:
         validate += ["--map", str(map_path)]
     return [

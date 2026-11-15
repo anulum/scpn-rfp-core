@@ -224,7 +224,37 @@ def test_monorepo_map_path_is_none_in_a_standalone_checkout(tmp_path: Path) -> N
     """A checkout with no ancestor map reports absence rather than guessing."""
     repository = tmp_path / "standalone" / "REPO"
     repository.mkdir(parents=True)
+    assert monorepo_map_path(repository, search_limit=tmp_path) is None
+
+
+def test_monorepo_map_path_ignores_a_map_above_the_search_limit(tmp_path: Path) -> None:
+    """A map above the limit stays invisible; a map directly under it is found."""
+    outer = tmp_path / "outer"
+    map_file = outer / MAP_RELATIVE_TO_MONOREPO
+    map_file.parent.mkdir(parents=True)
+    map_file.write_text("{}", encoding="utf-8")
+    repository = outer / "inner" / "REPO"
+    repository.mkdir(parents=True)
+    assert monorepo_map_path(repository, search_limit=outer / "inner") is None
+    assert monorepo_map_path(repository, search_limit=outer) == map_file
+    assert monorepo_map_path(repository) == map_file
+
+
+def test_monorepo_map_path_walks_to_the_root_when_no_ancestor_carries_the_map(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """A map name that no directory carries makes the search reach the root."""
+    import preflight as preflight_module
+
+    monkeypatch.setattr(
+        preflight_module,
+        "MAP_RELATIVE_TO_MONOREPO",
+        Path("no-such-ecosystem-directory") / "absent_repository_map.json",
+    )
+    repository = tmp_path / "anywhere" / "REPO"
+    repository.mkdir(parents=True)
     assert monorepo_map_path(repository) is None
+    assert monorepo_map_path(repository, search_limit=tmp_path / "unrelated") is None
 
 
 def test_gate_plan_carries_map_flag_when_an_ancestor_map_exists(
@@ -247,7 +277,8 @@ def test_gate_plan_omits_map_flag_in_a_standalone_checkout(tmp_path: Path) -> No
     """Without a reachable map the validator gate carries no ``--map``."""
     repository = tmp_path / "standalone" / "REPO"
     repository.mkdir(parents=True)
-    command = dict(build_gate_plan(repository))["reactor-domain"]
+    plan = dict(build_gate_plan(repository, map_search_limit=tmp_path))
+    command = plan["reactor-domain"]
     assert command is not None
     assert "--map" not in command
 
